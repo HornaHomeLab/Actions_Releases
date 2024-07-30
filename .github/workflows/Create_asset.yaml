@@ -1,0 +1,68 @@
+name: Update asset
+
+on:
+  workflow_call:
+    inputs:
+      archive_name:
+        type: string
+        required: true
+      release_id:
+        type: string
+        required: true
+      version_tag:
+        type: string
+        required: true
+      files_to_archive:
+        type: string
+        required: true
+        description: JSON list of file paths which should be included in archive
+
+
+
+jobs:
+  Upload_Assets:
+    runs-on: container
+    steps:
+      - name: Check if asset exist
+        id: asset
+        run: |
+          echo "asset_id=$(
+            curl -L -s --fail-with-body \
+              -X GET \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              --url https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ inputs.version_tag }} \
+            |  jq '.assets[0].id')" >> $GITHUB_OUTPUT
+      
+      - name: Delete existing asset
+        if: steps.asset.outputs.asset_id != 'null'
+        run: |
+          curl -L -s --fail-with-body \
+            -X DELETE \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            --url https://api.github.com/repos/${{ github.repository }}/releases/assets/${{ steps.asset.outputs.asset_id }}
+      
+      - name: Create archive
+        id: create-archive
+        run: |
+          archive_name="${{ inputs.archive_name }}.tar.gz"
+          echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
+          tar -czf $archive_name ${{inputs.files_to_archive}}
+      
+      - name: Upload archive
+        run: |
+          curl -L -s --fail-with-body \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/octet-stream" \
+            --url "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ inputs.release_id }}/assets?name=${{ steps.create-archive.outputs.archive_name }}" \
+            --data-binary "@${{ steps.create-archive.outputs.archive_name }}"
+      
+      - name: Remove archive from disk
+        run: |
+          rm ${{ steps.create-archive.outputs.archive_name }}

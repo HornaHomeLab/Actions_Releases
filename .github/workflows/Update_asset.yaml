@@ -20,7 +20,7 @@ on:
 
 
 jobs:
-  Upload_assets:
+  Upload_Assets:
     runs-on: container
     steps:
       - name: Check if asset exist
@@ -51,6 +51,7 @@ jobs:
           archive_name="${{ inputs.archive_name }}.tar.gz"
           echo "archive_name=$archive_name" >> $GITHUB_OUTPUT
           tar -czf $archive_name ${{inputs.files_to_archive}}
+      
       - name: Upload archive
         run: |
           curl -L -s --fail-with-body \
@@ -61,6 +62,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             --url "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ inputs.release_id }}/assets?name=${{ steps.create-archive.outputs.archive_name }}" \
             --data-binary "@${{ steps.create-archive.outputs.archive_name }}"
+      
       - name: Remove archive from disk
         run: |
           rm ${{ steps.create-archive.outputs.archive_name }}

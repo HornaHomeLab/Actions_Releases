@@ -5,13 +5,13 @@ on:
     outputs:
       version_tag:
         description: "Version tag retrieved from README.md"
-        value: ${{ jobs.Check_if_tag_exists.outputs.version_tag }}
+        value: ${{ jobs.Get_Version.outputs.version_tag }}
       tag_reference_exist:
         description: "Bool if tag already exist or not"
-        value: ${{ jobs.Check_if_tag_exists.outputs.tag_reference_exist }}
+        value: ${{ jobs.Get_Version.outputs.tag_reference_exist }}
 
 jobs:
-  Check_if_tag_exists:
+  Get_Version:
     runs-on: container
     outputs:
       version_tag: ${{ steps.file-tag.outputs.tag_name }}
@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Get Tag from file
         id: file-tag
         run: |
@@ -49,4 +50,3 @@ jobs:
               echo "Tag does not exist"
               echo "tag_reference_exist=false" >> $GITHUB_OUTPUT
             fi
-

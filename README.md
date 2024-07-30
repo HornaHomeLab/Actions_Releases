@@ -1,4 +1,5 @@
 # Actions_Releases
+##### version: 1.0.0
 GitHub reusable Workflows definition used to automate publishing releases in repositories.
 
 Retrieve version from `README.md` in repository root, looking for phrase:

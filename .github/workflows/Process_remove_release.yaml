@@ -8,15 +8,15 @@ jobs:
   Get_Version:
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yaml@main
 
-  Remove_Tag:
-    needs: Get_Version
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_tag.yaml@main
-    with:
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
-      tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}
-
   Remove_Release:
     needs: Get_Version
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_release.yaml@main
     with:
       version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+
+  Remove_Tag:
+    needs: [Get_Version, Remove_Release]
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_tag.yaml@main
+    with:
+      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}

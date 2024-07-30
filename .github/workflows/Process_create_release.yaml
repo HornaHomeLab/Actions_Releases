@@ -35,7 +35,7 @@ jobs:
 
   Upload_Assets:
     needs: [Get_Version, Create_Release]
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Update_asset.yaml@main
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_asset.yaml@main
     with:
       archive_name: ${{ inputs.archive_name }}
       release_id: ${{ needs.Create_Release.outputs.release_id }}

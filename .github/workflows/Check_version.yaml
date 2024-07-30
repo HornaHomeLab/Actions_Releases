@@ -50,3 +50,4 @@ jobs:
               echo "Tag does not exist"
               echo "tag_reference_exist=false" >> $GITHUB_OUTPUT
             fi
+            

@@ -10,7 +10,7 @@ on:
 
 
 jobs:
-  Create_Release:
+  Remove_Release:
     runs-on: container
     steps:
       - name: Check if Release ${{ inputs.version_tag }} exists

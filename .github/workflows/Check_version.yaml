@@ -63,7 +63,7 @@ jobs:
               --url https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.file-tag.outputs.tag_name }} \
                 | jq .prerelease)
 
-          if [ "$is_pre_release" != "null" ]; then
+          if [ "$is_pre_release" == "true" ]; then
             echo "Can not modify Full Release ${{ steps.file-tag.outputs.tag_name }}"
             exit 1
           fi

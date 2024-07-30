@@ -10,7 +10,7 @@ jobs:
 
   Remove_Tag:
     needs: Get_Version
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_tag.yaml@addRemovalWorkflows
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_tag.yaml@main
     with:
       version_tag: ${{ needs.Get_Version.outputs.version_tag }}
       tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}

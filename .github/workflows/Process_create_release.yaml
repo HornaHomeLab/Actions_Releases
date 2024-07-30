@@ -1,0 +1,43 @@
+name: Publish release
+run-name: Publish release ${{ github.repository }}
+
+on:
+  workflow_call:
+    inputs:
+      pre_release:
+        type: boolean
+        default: false
+        required: false
+      archive_name:
+        type: string
+        required: true
+      files:
+        type: string
+        required: true
+
+jobs:
+  Get_Version:
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yaml@main
+
+  Create_Tag:
+    needs: Get_Version
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_tag.yaml@main
+    with:
+      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}
+
+  Create_Release:
+    needs: [Get_Version, Create_Tag]
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_release.yaml@main
+    with:
+      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      pre_release: ${{ inputs.pre_release }}
+
+  Upload_Assets:
+    needs: [Get_Version, Create_Release]
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Update_asset.yaml@main
+    with:
+      archive_name: ${{ inputs.archive_name }}
+      release_id: ${{ needs.Create_Release.outputs.release_id }}
+      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      files_to_archive: ${{ inputs.files }}

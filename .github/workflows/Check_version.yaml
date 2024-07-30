@@ -64,8 +64,7 @@ jobs:
                 | jq .prerelease)
 
           if [ "$is_pre_release" != "null" ]; then
-            echo "Can not override Full Release ${{ steps.file-tag.outputs.tag_name }}"
-            echo "Increment version please"
+            echo "Can not modify Full Release ${{ steps.file-tag.outputs.tag_name }}"
             exit 1
           fi
             

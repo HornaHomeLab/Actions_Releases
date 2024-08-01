@@ -16,28 +16,28 @@ on:
         required: true
 
 jobs:
-  Get_Version:
+  Version:
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yaml@main
 
-  Create_Tag:
-    needs: Get_Version
+  Tag:
+    needs: Version
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_tag.yaml@main
     with:
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
-      tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}
+      version_tag: ${{ needs.Version.outputs.version_tag }}
+      tag_reference_exist: ${{ needs.Version.outputs.tag_reference_exist }}
 
-  Create_Release:
-    needs: [Get_Version, Create_Tag]
+  Release:
+    needs: [Version, Tag]
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_release.yaml@main
     with:
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      version_tag: ${{ needs.Version.outputs.version_tag }}
       pre_release: ${{ inputs.pre_release }}
 
-  Upload_Assets:
-    needs: [Get_Version, Create_Release]
+  Assets:
+    needs: [Version, Release]
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_asset.yaml@main
     with:
       archive_name: ${{ inputs.archive_name }}
-      release_id: ${{ needs.Create_Release.outputs.release_id }}
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      release_id: ${{ needs.Release.outputs.release_id }}
+      version_tag: ${{ needs.Version.outputs.version_tag }}
       files_to_archive: ${{ inputs.files }}

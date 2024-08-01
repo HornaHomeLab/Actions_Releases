@@ -20,7 +20,7 @@ on:
 
 
 jobs:
-  Upload_Assets:
+  Upload:
     runs-on: container
     steps:
       - name: Check if asset exist

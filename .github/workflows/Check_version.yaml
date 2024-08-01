@@ -5,13 +5,13 @@ on:
     outputs:
       version_tag:
         description: "Version tag retrieved from README.md"
-        value: ${{ jobs.Get_Version.outputs.version_tag }}
+        value: ${{ jobs.Check.outputs.version_tag }}
       tag_reference_exist:
         description: "Bool if tag already exist or not"
-        value: ${{ jobs.Get_Version.outputs.tag_reference_exist }}
+        value: ${{ jobs.Check.outputs.tag_reference_exist }}
 
 jobs:
-  Get_Version:
+  Check:
     runs-on: container
     outputs:
       version_tag: ${{ steps.file-tag.outputs.tag_name }}

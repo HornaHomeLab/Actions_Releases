@@ -11,7 +11,7 @@ on:
         required: true
 
 jobs:
-  Create_Version_Tag:
+  Create:
     runs-on: container
     steps:
       - name: Create Tag ${{ inputs.version_tag }} object

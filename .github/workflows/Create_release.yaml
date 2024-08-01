@@ -12,12 +12,12 @@ on:
     outputs:
       release_id:
         description: "Release id of updated or newly created object"
-        value: ${{ jobs.Create_Release.outputs.release_id }}
+        value: ${{ jobs.Create.outputs.release_id }}
 
 
 
 jobs:
-  Create_Release:
+  Create:
     runs-on: container
     outputs:
       release_id: ${{ steps.release-id.outputs.release_id }}

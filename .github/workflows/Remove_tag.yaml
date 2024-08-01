@@ -11,7 +11,7 @@ on:
         required: true
 
 jobs:
-  Remove_Version_Tag:
+  Remove:
     runs-on: container
     steps:
       - name: Remove Tag ${{ inputs.version_tag }} reference

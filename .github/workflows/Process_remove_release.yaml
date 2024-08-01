@@ -5,18 +5,18 @@ on:
   workflow_call:
 
 jobs:
-  Get_Version:
+  Version:
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yaml@main
 
-  Remove_Release:
-    needs: Get_Version
+  Release:
+    needs: Version
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_release.yaml@main
     with:
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
+      version_tag: ${{ needs.Version.outputs.version_tag }}
 
-  Remove_Tag:
-    needs: [Get_Version, Remove_Release]
+  Tag:
+    needs: [Version, Release]
     uses: HornaHomeLab/Actions_Releases/.github/workflows/Remove_tag.yaml@main
     with:
-      version_tag: ${{ needs.Get_Version.outputs.version_tag }}
-      tag_reference_exist: ${{ needs.Get_Version.outputs.tag_reference_exist }}
+      version_tag: ${{ needs.Version.outputs.version_tag }}
+      tag_reference_exist: ${{ needs.Version.outputs.tag_reference_exist }}

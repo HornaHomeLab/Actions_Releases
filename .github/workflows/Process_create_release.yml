@@ -101,7 +101,7 @@ jobs:
 
           if [ "$release_id" == 'null' ]; than
             echo "Failed to create Release $version."
-            echo "$# {{ env.failure_ico }} Failed to create Release $version. ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
+            echo "# ${{ env.failure_ico }} Failed to create Release $version. ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
 

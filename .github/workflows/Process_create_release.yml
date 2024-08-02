@@ -116,7 +116,7 @@ jobs:
               "body":"",
               "draft":false,
               "prerelease":${{ inputs.pre_release }},
-              "make_latest":${{ inputs.pre_release == 'false' && 'true' || 'false' }}
+              "make_latest":${{ inputs.pre_release == 'false' && 'true' || 'false' }},
               "generate_release_notes":false
             }'
 

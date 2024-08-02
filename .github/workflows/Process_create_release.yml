@@ -148,7 +148,7 @@ jobs:
   Asset:
     if: inputs.files != 'null'
     needs: Create
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_asset.yml@development
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Create_asset.yml@main
     with:
       archive_name: ${{ inputs.archive_name }}
       release_id: ${{ needs.Create.outputs.release_id }}

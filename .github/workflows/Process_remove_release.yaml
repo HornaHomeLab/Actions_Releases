@@ -6,7 +6,7 @@ on:
 
 jobs:
   Version:
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yaml@main
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Check_version.yml@main
 
   Release:
     needs: Version

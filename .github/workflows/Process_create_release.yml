@@ -52,7 +52,7 @@ jobs:
         id: check
         run: |
           echo "https://api.github.com/repos/${{ github.repository }}/releases/tags/$version"
-          
+
           release_details=$(
             curl -L -s \
               -X GET \
@@ -93,13 +93,14 @@ jobs:
               }'
             )
 
-          release_id=$(echo "$release" | jq .id)"
+          release_id="$(echo "$release" | jq .id)"
 
           if [ "$release_id" == 'null' ]; then
             echo "Failed to create Release $version."
             echo "# ${{ env.failure_ico }} Failed to create Release. ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
+
           echo "release_id=$release_id" >> $GITHUB_OUTPUT
 
       - name: Update
@@ -145,5 +146,4 @@ jobs:
       release_id: ${{ needs.Release.outputs.release_id }}
       version_tag: ${{ needs.Release.outputs.version }}
       files_to_archive: ${{ inputs.files }}
-    secrets:
-      inherit
+    secrets: inherit

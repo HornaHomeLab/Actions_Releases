@@ -20,6 +20,10 @@ on:
         required: false
         default: "null"
 
+    outputs:
+      released_version:
+        value: ${{ jobs.Create.outputs.version }}
+
 permissions:
   contents: write
 

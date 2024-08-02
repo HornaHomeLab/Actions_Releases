@@ -64,13 +64,13 @@ jobs:
           # release_id=$(echo "$release_details" | jq .id)
           # pre_release=$(echo "$release_details" | jq .prerelease)
 
-          if [ "$pre_release" == "false" ]; then
-            echo "Can not modify Full Release"
-            echo "# ${{ env.failure_ico }} Can not modify Full Release ($version) ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
+          # if [ "$pre_release" == "false" ]; then
+          #   echo "Can not modify Full Release"
+          #   echo "# ${{ env.failure_ico }} Can not modify Full Release ($version) ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
+          #   exit 1
+          # fi
 
-          echo "release_id=$release_id" >> $GITHUB_OUTPUT
+          # echo "release_id=$release_id" >> $GITHUB_OUTPUT
 
       - name: Create
         id: create

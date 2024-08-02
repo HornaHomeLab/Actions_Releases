@@ -20,7 +20,7 @@ permissions:
   contents: write
 
 env:
-  success_ico: ":heavy_check_mark:"
+  success_ico: ":white_check_mark:"
   failure_ico: ":x:"
   cancel_ico: ":no_entry_sign:"
 

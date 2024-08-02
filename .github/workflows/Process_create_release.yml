@@ -84,7 +84,7 @@ jobs:
               -d '{
                 "tag_name":"${{ steps.file.outputs.tag_name }}",
                 "name":"${{ steps.file.outputs.tag_name }} Release",
-                "body":"",
+                "body":"Created by ${{github.actor}}",
                 "draft":false,
                 "prerelease":${{ inputs.pre_release }},
                 "generate_release_notes":false
@@ -113,7 +113,7 @@ jobs:
             -d '{
               "tag_name":"${{ steps.file.outputs.tag_name }}",
               "name":"${{ steps.file.outputs.tag_name }} Release",
-              "body":"",
+              "body":"Updated by ${{github.actor}}",
               "draft":false,
               "prerelease":${{ inputs.pre_release }},
               "make_latest":${{ inputs.pre_release == 'false' && 'true' || 'false' }}

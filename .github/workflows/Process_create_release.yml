@@ -81,7 +81,7 @@ jobs:
           version: ${{ steps.file.outputs.tag_name }}
         run: |
           release=$(
-            curl -L -s --fail-with-body \
+            curl -L -s \
               -X POST \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \

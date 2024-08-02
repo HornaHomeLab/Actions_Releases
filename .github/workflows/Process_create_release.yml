@@ -126,7 +126,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            --url https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ steps.check.outputs.release_id }} \
+            --url https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ steps.file.outputs.tag_name }} \
             -d '{ 
               "sha":"${{ github.sha }}",
               "force":true

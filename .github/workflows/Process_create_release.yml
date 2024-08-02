@@ -50,8 +50,6 @@ jobs:
 
       - name: Check
         id: check
-        env:
-          version: ${{ steps.file.outputs.tag_name }}
         run: |
           echo "https://api.github.com/repos/${{ github.repository }}/releases/tags/$version"
           
@@ -61,14 +59,14 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              https://api.github.com/repos/${{ github.repository }}/releases/tags/$version
+              https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.file.outputs.tag_name }}
           )
           release_id=$(echo "$release_details" | jq .id)
           pre_release=$(echo "$release_details" | jq .prerelease)
 
           if [ "$pre_release" == "false" ]; then
             echo "Can not modify Full Release"
-            echo "# ${{ env.failure_ico }} Can not modify Full Release ($version) ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
+            echo "# ${{ env.failure_ico }} Can not modify Full Release (${{ steps.file.outputs.tag_name }}) ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
 
@@ -77,52 +75,42 @@ jobs:
       - name: Create
         id: create
         if: steps.check.outputs.release_id == 'null'
-        env:
-          version: ${{ steps.file.outputs.tag_name }}
         run: |
-          curl -L -s --fail-with-body \
-            -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            --url https://api.github.com/repos/${{ github.repository }}/releases \
-            -d '{
-              "tag_name":"$version",
-              "name":"$version Release",
-              "body":"",
-              "draft":false,
-              "prerelease":${{ inputs.pre_release }},
-              "generate_release_notes":false
-            }'
-
-          echo "release_id=$(
-            curl -L -s \
-              -X GET \
+          release=$(
+            curl -L -s --fail-with-body \
+              -X POST \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              https://api.github.com/repos/${{ github.repository }}/releases/tags/$version
-                | jq .id
-            )" >> $GITHUB_OUTPUT
+              --url https://api.github.com/repos/${{ github.repository }}/releases \
+              -d '{
+                "tag_name":"${{ steps.file.outputs.tag_name }}",
+                "name":"${{ steps.file.outputs.tag_name }} Release",
+                "body":"",
+                "draft":false,
+                "prerelease":${{ inputs.pre_release }},
+                "generate_release_notes":false
+              }'
+            )
+
+          release_id=$(echo "$release" | jq .id)"
 
           if [ "$release_id" == 'null' ]; then
             echo "Failed to create Release $version."
             echo "# ${{ env.failure_ico }} Failed to create Release. ${{ env.failure_ico }}" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
+          echo "release_id=$release_id" >> $GITHUB_OUTPUT
 
       - name: Update
         if: steps.check.outputs.release_id != 'null'
-        env:
-          version: ${{ steps.file.outputs.tag_name }}
-          release_id: ${{ steps.check.outputs.release_id }}
         run: |
           curl -L -s --fail-with-body \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            --url https://api.github.com/repos/${{ github.repository }}/releases/$release_id \
+            --url https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.check.outputs.release_id }} \
             -d '{
               "tag_name":"$version",
               "name":"$version Release",
@@ -133,24 +121,20 @@ jobs:
             }'
 
       - name: Link
-        env:
-          version: ${{ steps.file.outputs.tag_name }}
         run: |
           curl -L -s --fail-with-body \
             -X PATCH \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            --url https://api.github.com/repos/${{ github.repository }}/git/refs/tags/$version \
+            --url https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ steps.check.outputs.release_id }} \
             -d '{ 
               "sha":"${{ github.sha }}",
               "force":true
             }'
       - name: Summary
-        env:
-          version: ${{ steps.file.outputs.tag_name }}
         run: |
-          echo "${{ env.success_ico }} Release $version created successfully ${{ env.success_ico }}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ env.success_ico }} Release created successfully ${{ env.success_ico }}" >> $GITHUB_STEP_SUMMARY
 
   Asset:
     if: inputs.files != 'null'

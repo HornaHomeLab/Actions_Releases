@@ -56,7 +56,7 @@ jobs:
           echo "https://api.github.com/repos/${{ github.repository }}/releases/tags/$version"
           
           release=details=$(
-            curl -L -s --fail-with-body \
+            curl -L -s \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "X-GitHub-Api-Version: 2022-11-28" \

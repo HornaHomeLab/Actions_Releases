@@ -10,7 +10,7 @@ env:
   cancel_ico: ":no_entry_sign:"
 
 jobs:
-  Version:
+  Release:
     runs-on: ${{ vars.DEFAULT_RUNNER }}
     steps:
       - name: Checkout

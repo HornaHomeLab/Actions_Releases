@@ -21,7 +21,7 @@ on:
 
 jobs:
   Upload:
-    runs-on: container
+    runs-on: ${{ vars.DEFAULT_RUNNER }}
     steps:
       - name: Check if asset exist
         id: asset

@@ -15,9 +15,12 @@ on:
       files_to_archive:
         type: string
         required: true
-        description: JSON list of file paths which should be included in archive
+        description: Space seprated list of files to include in archive
 
-
+env:
+  success_ico: ":white_check_mark:"
+  failure_ico: ":x:"
+  cancel_ico: ":no_entry_sign:"
 
 jobs:
   Upload:
@@ -66,3 +69,8 @@ jobs:
       - name: Remove archive from disk
         run: |
           rm ${{ steps.create-archive.outputs.archive_name }}
+    
+      - name: Summary
+        if: success()
+        run: |
+          echo "${{ env.success_ico }} Asset uploaded successfully ${{ env.success_ico }}" >> $GITHUB_STEP_SUMMARY

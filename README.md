@@ -41,6 +41,7 @@ Everything in same line after `:` will be considered as desired version
 
 # Sample workflow 
 Example Workflow to place in application repository to trigger Releases creation on `pull requests`.
+It includes the deployment to dev environment using workflows from [Actions_Deployments](https://github.com/HornaHomeLab/Actions_Deployments).
 
 When PR is opened, pre-release is created on each push. 
 If the current version is overlapping with existing Full Release version, 
@@ -55,7 +56,7 @@ If PR is closed without merge, than existing pre-release and version tag is remo
 > No GitHub Actions can be started on PR with conflicts (current GitHub Actions limitation)
 
 ```YAML
-name: PR
+name: CI/CD
 
 on:
   pull_request:
@@ -65,25 +66,31 @@ permissions:
   contents: write
 
 jobs:
-  Create_Pre_Release:
-      if: github.event.pull_request.merged == false && (github.event.action == 'opened' || github.event.action == 'synchronize')
-      uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_create_release.yaml@main
-      with:
-        pre_release: true
-        archive_name: "new_arch"
-        files: "./README.md ./main.py"
+  Pre:
+    if: github.event.pull_request.merged == false && (github.event.action == 'opened' || github.event.action == 'synchronize')
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_create_release.yml@main
+    with:
+      pre_release: true
+      archive_name: "test"
 
-  Create_Release:
+  Full:
     if: github.event.pull_request.merged == true && github.event.action == 'closed'
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_create_release.yaml@main
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_create_release.yml@main
     with:
       pre_release: false
-      archive_name: "new_arch"
-      files: "./README.md ./main.py"
+      archive_name: "test"
+      latest: true
 
-      
-  Remove_Release:
+  Deploy:
+    needs: Full
+    uses: HornaHomeLab/Actions_Deployments/.github/workflows/Run_docker_compose.yml@main
+    with:
+      environment: "development"
+      version: ${{ needs.Full.outputs.released_version }}
+    secrets: inherit
+
+  Remove:
     if: github.event.pull_request.merged == false && github.event.action == 'closed'
-    uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_remove_release.yaml@main
+    uses: HornaHomeLab/Actions_Releases/.github/workflows/Process_remove_release.yml@main
 
 ```

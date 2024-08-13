@@ -57,6 +57,7 @@ If PR is closed without merge, than existing pre-release and version tag is remo
 
 ```YAML
 name: CI/CD
+run-name: CI/CD ${{github.event.pull_request.title}}
 
 on:
   pull_request:
